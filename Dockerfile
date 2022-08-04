@@ -1,5 +1,9 @@
-FROM ubuntu
+FROM golang:alpine AS builder
+RUN mkdir /meson-terminal
+ADD . /meson-terminal/
+WORKDIR /meson-terminal
+RUN .auto-build.sh
 
-EXPOSE 430
-
-RUN apt-get update && apt-get install -y tar
+FROM gcr.io/distroless/base
+COPY --from=builder /bitruss/meson-terminal /meson-terminal
+ENTRYPOINT ["/meson-terminal"]
